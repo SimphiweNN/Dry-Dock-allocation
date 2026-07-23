@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dry Dock — Sadie Family Wines Allocation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0e14; --surface:#111520; --surface2:#161b26; --surface3:#1c2230;
+    --gold:#b8962e; --gold-lt:#d4af5a; --gold-pale:#e8d49a;
+    --silver:#c2c8d8; --silver-dk:#8a93a8;
+    --danger:#c0414f; --danger-lt:#e05565;
+    --success:#3a8c5c; --success-lt:#4aad72;
+    --warn:#b07030; --warn-lt:#d4904a;
+    --text:#dde1eb; --muted:#6a7490;
+    --line:rgba(194,200,216,0.10);
+    --line-strong:rgba(184,150,46,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 12% -10%, rgba(184,150,46,0.10), transparent 40%),
+      radial-gradient(circle at 100% 0%, rgba(184,150,46,0.06), transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{ background:rgba(184,150,46,0.35); }
+  .serif{ font-family:'Fraunces',serif; }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  a{ color:var(--gold-lt); }
+
+  /* ---------- Layout shells ---------- */
+  .wrap{ max-width:920px; margin:0 auto; padding:0 20px 140px; }
+  .hairline{ height:1px; background:var(--line); border:none; margin:0; }
+
+  /* ---------- Header / Hero ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:920px; margin:0 auto; padding:22px 20px 0;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; letter-spacing:.08em; font-size:12px; text-transform:uppercase; color:var(--silver-dk); }
+  .brand strong{ color:var(--gold-lt); font-weight:600; }
+  .crest{ width:22px; height:22px; opacity:.9; }
+
+  .hero{
+    position:relative;
+    padding:56px 0 34px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    margin-bottom:34px;
+  }
+  .hero .crest-watermark{
+    position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    width:120px; height:120px; opacity:.08; pointer-events:none;
+  }
+  .eyebrow{
+    font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold-lt);
+    margin-bottom:14px; position:relative; z-index:1;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif; font-weight:500; font-style:italic;
+    font-size:clamp(34px,6vw,58px); line-height:1.05; margin:0 0 10px; color:#f2ede0;
+    position:relative; z-index:1;
+  }
+  .hero p.sub{
+    color:var(--silver); font-size:15px; max-width:520px; margin:0 auto; line-height:1.6;
+    position:relative; z-index:1;
+  }
+
+  .deadline-strip{
+    margin:26px auto 0; max-width:520px;
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, rgba(184,150,46,0.09), rgba(184,150,46,0.02));
+    border-radius:3px;
+    padding:14px 18px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    position:relative; z-index:1;
+  }
+  .deadline-strip .label{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--silver-dk); }
+  .deadline-strip .value{ font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--gold-pale); font-weight:500; }
+  .deadline-strip.closed{ border-color:rgba(192,65,79,0.4); background:linear-gradient(180deg, rgba(192,65,79,0.10), rgba(192,65,79,0.02)); }
+  .deadline-strip.closed .value{ color:var(--danger-lt); }
+
+  /* ---------- Vintage note ---------- */
+  .note-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:4px;
+    padding:26px 28px; margin-bottom:30px;
+  }
+  .note-card h2{ font-family:'Fraunces',serif; font-weight:500; font-size:20px; margin:0 0 10px; color:var(--gold-pale); }
+  .note-card p{ color:var(--silver); line-height:1.7; font-size:14.5px; margin:0 0 10px; }
+  .note-card p:last-child{ margin-bottom:0; }
+  .note-card .attribution{ color:var(--muted); font-size:12px; margin-top:14px; font-style:italic; }
+
+  .ratings-strip{
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:34px;
+  }
+  .rating-pill{
+    display:flex; align-items:baseline; gap:6px;
+    background:var(--surface2); border:1px solid var(--line); border-radius:100px;
+    padding:6px 14px 6px 6px; font-size:12px; color:var(--silver);
+  }
+  .rating-pill .score{
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px; color:var(--gold-lt);
+    background:var(--surface3); border-radius:100px; padding:3px 9px;
+  }
+
+  /* ---------- Section headers ---------- */
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; margin:44px 0 16px; }
+  .section-head h3{ font-family:'Fraunces',serif; font-weight:500; font-size:22px; margin:0; color:#f2ede0; }
+  .section-head .count{ font-size:12px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+  .series-label{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold-lt); margin:0 0 2px; }
+
+  /* ---------- Customer form ---------- */
+  .customer-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:22px;
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field.full{ grid-column:1 / -1; }
+  .field label{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--silver-dk); }
+  .field input, .field textarea{
+    background:var(--surface3); border:1px solid var(--line); border-radius:3px;
+    padding:10px 12px; color:var(--text); font-family:'Inter',sans-serif; font-size:14px;
+    outline:none; transition:border-color .15s;
+  }
+  .field input:focus, .field textarea:focus{ border-color:var(--gold); }
+  .field textarea{ resize:vertical; min-height:60px; }
+  @media (max-width:640px){ .customer-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- Wine cards ---------- */
+  .wine-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:720px){ .wine-grid{ grid-template-columns:1fr; } }
+
+  .wine-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:4px;
+    padding:18px 18px 16px; display:flex; flex-direction:column; gap:10px;
+    transition:border-color .15s, transform .15s;
+    position:relative;
+  }
+  .wine-card.in-cart{ border-color:var(--line-strong); background:linear-gradient(180deg, rgba(184,150,46,0.06), var(--surface)); }
+  .wine-card .top{ display:flex; justify-content:space-between; gap:10px; }
+  .wine-card h4{ font-family:'Fraunces',serif; font-weight:500; font-size:17px; margin:0; color:#f2ede0; line-height:1.25; }
+  .wine-card .format{ font-size:11.5px; color:var(--silver-dk); margin-top:2px; }
+  .wine-card .price{ font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--gold-lt); white-space:nowrap; }
+  .wine-card .note{ font-size:12.5px; color:var(--silver-dk); line-height:1.55; }
+  .wine-card .footer-row{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:8px; border-top:1px solid var(--line); }
+
+  .stepper{ display:flex; align-items:center; gap:0; border:1px solid var(--line); border-radius:3px; overflow:hidden; }
+  .stepper button{
+    width:30px; height:30px; background:var(--surface3); border:none; color:var(--gold-lt);
+    font-size:16px; cursor:pointer; transition:background .15s; line-height:1;
+  }
+  .stepper button:hover{ background:var(--surface2); }
+  .stepper button:disabled{ color:var(--muted); cursor:not-allowed; }
+  .stepper .qty{
+    width:38px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:14px;
+    background:var(--surface); padding:6px 0;
+  }
+  .line-total{ font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted); }
+  .line-total.active{ color:var(--gold-pale); }
+
+  .not-allocated{
+    background:var(--surface); border:1px dashed var(--line); border-radius:4px;
+    padding:16px 18px; color:var(--muted); font-size:13px; margin-top:14px;
+  }
+  .not-allocated strong{ color:var(--silver); }
+
+  /* ---------- Sticky summary bar ---------- */
+  .summary-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:40;
+    background:rgba(17,21,32,0.92); backdrop-filter:blur(10px);
+    border-top:1px solid var(--line-strong);
+    transform:translateY(100%); transition:transform .25s ease;
+  }
+  .summary-bar.visible{ transform:translateY(0); }
+  .summary-inner{
+    max-width:920px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .summary-left{ display:flex; flex-direction:column; gap:2px; }
+  .summary-left .items{ font-size:12px; color:var(--muted); }
+  .summary-left .total{ font-family:'JetBrains Mono',monospace; font-size:18px; color:var(--gold-pale); font-weight:500; }
+  .btn{
+    border:none; border-radius:3px; padding:12px 22px; font-family:'Inter',sans-serif;
+    font-size:13.5px; font-weight:600; letter-spacing:.03em; cursor:pointer;
+    transition:transform .12s, box-shadow .12s, opacity .12s;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-gold{ background:linear-gradient(180deg, var(--gold-lt), var(--gold)); color:#161207; }
+  .btn-gold:hover{ box-shadow:0 0 0 1px var(--gold-lt), 0 6px 18px rgba(184,150,46,0.25); }
+  .btn-gold:disabled{ opacity:.35; cursor:not-allowed; box-shadow:none; }
+  .btn-ghost{ background:transparent; border:1px solid var(--line); color:var(--silver); }
+  .btn-ghost:hover{ border-color:var(--silver-dk); }
+  .btn-danger{ background:transparent; border:1px solid rgba(192,65,79,0.5); color:var(--danger-lt); }
+
+  /* ---------- Confirmation ---------- */
+  .confirm-overlay{
+    position:fixed; inset:0; background:rgba(6,8,13,0.86); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; z-index:60; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .2s;
+  }
+  .confirm-overlay.visible{ opacity:1; pointer-events:auto; }
+  .confirm-card{
+    background:var(--surface2); border:1px solid var(--line-strong); border-radius:6px;
+    max-width:440px; width:100%; padding:40px 32px 32px; text-align:center;
+    transform:translateY(14px) scale(.98); transition:transform .25s;
+  }
+  .confirm-overlay.visible .confirm-card{ transform:translateY(0) scale(1); }
+  .seal{
+    width:78px; height:78px; margin:0 auto 20px;
+    animation:seal-stamp .55s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes seal-stamp{
+    0%{ transform:scale(2.6) rotate(-14deg); opacity:0; }
+    60%{ transform:scale(0.92) rotate(3deg); opacity:1; }
+    100%{ transform:scale(1) rotate(0deg); opacity:1; }
+  }
+  .confirm-card h3{ font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:24px; margin:0 0 10px; color:#f2ede0; }
+  .confirm-card p{ color:var(--silver); font-size:13.5px; line-height:1.6; margin:0 0 20px; }
+  .confirm-card .ref{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-bottom:22px; }
+
+  /* ---------- Footer ---------- */
+  footer{ text-align:center; padding:50px 20px 20px; color:var(--muted); font-size:11.5px; }
+  footer a.admin-link{ color:var(--muted); text-decoration:none; border-bottom:1px dotted var(--muted); }
+  footer a.admin-link:hover{ color:var(--gold-lt); border-color:var(--gold-lt); }
+
+  /* ---------- Admin view ---------- */
+  #adminView{ display:none; }
+  #adminView.visible{ display:block; }
+  #customerView.hidden{ display:none; }
+
+  .admin-header{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    padding:26px 0 20px; border-bottom:1px solid var(--line); margin-bottom:26px;
+  }
+  .admin-header h2{ font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:26px; margin:0; color:#f2ede0; }
+  .admin-header .sub{ color:var(--muted); font-size:12.5px; margin-top:4px; }
+
+  .kpi-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:30px; }
+  @media (max-width:640px){ .kpi-row{ grid-template-columns:1fr; } }
+  .kpi{ background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:16px 18px; }
+  .kpi .label{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--silver-dk); margin-bottom:6px; }
+  .kpi .value{ font-family:'JetBrains Mono',monospace; font-size:24px; color:var(--gold-pale); }
+
+  table.ledger{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.ledger th{
+    text-align:left; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--silver-dk); padding:10px 12px; border-bottom:1px solid var(--line-strong);
+  }
+  table.ledger td{ padding:10px 12px; border-bottom:1px solid var(--line); color:var(--text); vertical-align:top; }
+  table.ledger tr:hover td{ background:rgba(184,150,46,0.03); }
+  table.ledger td.num, table.ledger th.num{ text-align:right; font-family:'JetBrains Mono',monospace; }
+  .wine-total-row td{ font-weight:600; }
+  .customer-sub{ font-size:11.5px; color:var(--muted); padding-top:2px; }
+
+  .admin-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  .empty-state{ text-align:center; padding:60px 20px; color:var(--muted); }
+  .empty-state .crest{ width:40px; height:40px; opacity:.25; margin:0 auto 14px; display:block; }
+
+  .demo-banner{
+    display:none;
+    max-width:920px; margin:16px auto 0; padding:10px 16px;
+    background:rgba(176,112,48,0.12); border:1px solid rgba(176,112,48,0.4); border-radius:4px;
+    color:var(--warn-lt); font-size:12.5px; text-align:center;
+  }
+  .demo-banner.visible{ display:block; }
+
+  .toast{
+    position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-20px);
+    background:var(--surface3); border:1px solid var(--line-strong); border-radius:4px;
+    padding:10px 18px; font-size:13px; color:var(--gold-pale); z-index:80;
+    opacity:0; transition:opacity .2s, transform .2s; pointer-events:none;
+  }
+  .toast.visible{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <svg class="crest" viewBox="0 0 24 24" fill="none"><path d="M12 2v13M8 6h8M4 15c1.5 3 4.5 5 8 5s6.5-2 8-5M12 15v6" stroke="#b8962e" stroke-width="1.3" stroke-linecap="round"/><circle cx="12" cy="4" r="1.6" fill="#b8962e"/></svg>
+    <span><strong>Dry Dock</strong> Liquor Merchants</span>
+  </div>
+  <span style="font-size:11px; color:var(--muted); letter-spacing:.06em;">Private allocation</span>
+</div>
+
+<div class="demo-banner" id="demoBanner">Demo mode — no spreadsheet connected yet. Wishlists are only kept in this browser tab and will disappear on refresh. See sheet-backend-setup.md to connect a real Google Sheet.</div>
+
+<!-- ============ CUSTOMER VIEW ============ -->
+<div id="customerView">
+  <div class="hero">
+    <svg class="crest-watermark" viewBox="0 0 24 24" fill="none"><path d="M12 2v13M8 6h8M4 15c1.5 3 4.5 5 8 5s6.5-2 8-5M12 15v6" stroke="#b8962e" stroke-width="1"/><circle cx="12" cy="4" r="1.6" fill="#b8962e"/></svg>
+    <div class="eyebrow">Dry Dock Allocation &middot; Swartland, South Africa</div>
+    <h1>Sadie Family Wines</h1>
+    <p class="sub">The one you've been waiting for. Our allocation of Sadie Family Wines is open — tell us what you'd like, and in what quantity, and we'll do our best to see you right.</p>
+    <div class="deadline-strip" id="deadlineStrip">
+      <span class="label">Wishlist deadline</span>
+      <span class="value" id="deadlineValue">—</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="note-card">
+      <h2>From Eben, on the 2025 &amp; 2024 vintages</h2>
+      <p>Eben Sadie describes 2025 as an extraordinary, once-in-a-generation South African vintage — a season of deep winter reserves, even ripening and near-perfect conditions across the Swartland and beyond, giving the District Series wines unusual class and poise. The 2024 vintage behind the Signature range, by contrast, is a classical year: restrained, elegant, and true to the estate's long-standing style.</p>
+      <p>Sadie Family Wines is regarded as one of the most decorated estates in the world, and this release includes several bottlings singled out among Eben's best ever. As always, demand for this allocation will outstrip supply — we'll do everything we can to look after our customers fairly.</p>
+      <div class="attribution">Paraphrased from Eben's Notes — Release 2026, Sadie Family Wines.</div>
+    </div>
+
+    <div class="ratings-strip">
+      <div class="rating-pill"><span class="score">98</span> Columella 2023, Tim Atkin MW</div>
+      <div class="rating-pill"><span class="score">98</span> Palladius 2023, Tim Atkin MW</div>
+      <div class="rating-pill"><span class="score">99</span> Skerpioen 2024, Tim Atkin MW</div>
+      <div class="rating-pill"><span class="score">98</span> Mev Kirsten 2024, Tim Atkin MW</div>
+      <div class="rating-pill"><span class="score">97</span> Rotsbank 2024, Tim Atkin MW</div>
+      <div class="rating-pill"><span class="score">97</span> Skurfberg 2024, Tim Atkin MW</div>
+    </div>
+
+    <form id="customerForm" class="customer-grid" autocomplete="off">
+      <div class="field">
+        <label for="custName">Full name *</label>
+        <input type="text" id="custName" required placeholder="e.g. Nonhlanhla Masuku">
+      </div>
+      <div class="field">
+        <label for="custEmail">Email *</label>
+        <input type="email" id="custEmail" required placeholder="you@email.com">
+      </div>
+      <div class="field">
+        <label for="custPhone">Cell number</label>
+        <input type="tel" id="custPhone" placeholder="082 000 0000">
+      </div>
+      <div class="field">
+        <label for="custCustNo">Dry Dock account / customer no. (optional)</label>
+        <input type="text" id="custCustNo" placeholder="e.g. DD-00123">
+      </div>
+      <div class="field full">
+        <label for="custNotes">Notes for the team (optional)</label>
+        <textarea id="custNotes" placeholder="e.g. happy to substitute format if unavailable"></textarea>
+      </div>
+    </form>
+
+    <div class="section-head">
+      <div>
+        <div class="series-label">The Signatures &middot; 2024 vintage</div>
+        <h3>Columella &amp; Palladius</h3>
+      </div>
+    </div>
+    <div class="wine-grid" id="signatureGrid"></div>
+
+    <div class="section-head">
+      <div>
+        <div class="series-label">District Series &middot; 2025 vintage</div>
+        <h3>Single-vineyard wines</h3>
+      </div>
+      <span class="count" id="districtCount"></span>
+    </div>
+    <div class="wine-grid" id="districtGrid"></div>
+
+    <div class="not-allocated">
+      <strong>Please note:</strong> Voetpad White Blend was not allocated to Dry Dock for this release, so it isn't available to order below.
+    </div>
+  </div>
+
+  <footer>
+    Dry Dock Liquor Merchants &middot; wishlists are not confirmed orders — allocation is limited and shared fairly across customers.
+    <br><br>
+    <a class="admin-link" href="#" id="adminToggle">Dry Dock team ledger →</a>
+  </footer>
+</div>
+
+<!-- Sticky summary bar -->
+<div class="summary-bar" id="summaryBar">
+  <div class="summary-inner">
+    <div class="summary-left">
+      <span class="items" id="summaryItems">0 wines selected</span>
+      <span class="total mono" id="summaryTotal">R 0</span>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-ghost" id="clearBtn" type="button">Clear</button>
+      <button class="btn btn-gold" id="submitBtn" type="button">Send my wishlist</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation overlay -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-card">
+    <svg class="seal" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#b8962e" stroke-width="2"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#b8962e" stroke-width="1"/>
+      <path d="M50 26v34M38 34h24M28 55c4 9 12 15 22 15s18-6 22-15M50 55v15" stroke="#d4af5a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <circle cx="50" cy="28" r="3.2" fill="#d4af5a"/>
+    </svg>
+    <h3>Wishlist received</h3>
+    <p id="confirmMessage">Thank you — your wishlist has been logged with Dry Dock. We'll be in touch once allocations are finalised.</p>
+    <div class="ref" id="confirmRef"></div>
+    <button class="btn btn-ghost" id="confirmClose" type="button">Close</button>
+  </div>
+</div>
+
+<!-- ============ ADMIN VIEW ============ -->
+<div id="adminView">
+  <div class="wrap">
+    <div class="admin-header">
+      <div>
+        <h2>Sadie Allocation — Ledger</h2>
+        <div class="sub">Live wishlist demand across all customers. For the Dry Dock team only.</div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn btn-ghost" id="refreshBtn" type="button">Refresh</button>
+        <button class="btn btn-gold" id="exportBtn" type="button">Export CSV</button>
+        <a class="btn btn-ghost" id="backToForm" href="#" style="text-decoration:none; display:inline-flex; align-items:center;">Back to wishlist</a>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="label">Customers</div><div class="value" id="kpiSubmissions">0</div></div>
+      <div class="kpi"><div class="label">Bottles requested</div><div class="value" id="kpiBottles">0</div></div>
+      <div class="kpi"><div class="label">Estimated value</div><div class="value" id="kpiValue">R 0</div></div>
+    </div>
+
+    <div id="ledgerContainer"></div>
+    <div class="section-head"><h3>Customers</h3></div>
+    <div id="notesContainer"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CONFIG ===================== */
+// Edit ALLOCATION_DEADLINE for each new release — everything else keys off it.
+const CONFIG = {
+  releaseName: "Sadie Family Wines — 2026 Release",
+  allocationDeadline: "2026-12-15T23:59:59+02:00", // close of day, SAST
+  // Paste the Google Apps Script Web App URL here once deployed (see sheet-backend-setup.md).
+  // Leave blank to run in local demo mode — wishlists are stored in memory only and
+  // vanish on page refresh, which is fine for testing the flow but NOT for a real release.
+  sheetWebAppUrl: "https://script.google.com/macros/s/AKfycbyVE_yTeHkvLAz0RTE6fnk6e8JLq-v6bh4ZHbkg9ai5oMi-6Q1L6a1GPtb0Yr1eZqaY/exec",
+};
+const DEMO_MODE = !CONFIG.sheetWebAppUrl;
+let demoStore = []; // flat line items, demo mode only
+
+const WINES = [
+  { id:"columella-750",  series:"Signature", name:"Columella", vintage:"2024", format:"750ml",            price:1330, note:"Mediterranean spice and violet over dark red fruit, with the most refined tannins yet captured in this wine." },
+  { id:"columella-mag",  series:"Signature", name:"Columella", vintage:"2024", format:"Magnum 1.5L",       price:2885, note:"Mediterranean spice and violet over dark red fruit, with the most refined tannins yet captured in this wine." },
+  { id:"columella-dmag", series:"Signature", name:"Columella", vintage:"2024", format:"Double Magnum 3L",  price:5769, note:"Mediterranean spice and violet over dark red fruit, with the most refined tannins yet captured in this wine." },
+  { id:"palladius-750",  series:"Signature", name:"Palladius", vintage:"2024", format:"750ml",             price:1303, note:"Fresh lemon zest and nectarine over suppressed grapefruit, coated in salinity — restrained yet full of weight." },
+  { id:"palladius-mag",  series:"Signature", name:"Palladius", vintage:"2024", format:"Magnum 1.5L",       price:2826, note:"Fresh lemon zest and nectarine over suppressed grapefruit, coated in salinity — restrained yet full of weight." },
+  { id:"palladius-dmag", series:"Signature", name:"Palladius", vintage:"2024", format:"Double Magnum 3L",  price:5652, note:"Fresh lemon zest and nectarine over suppressed grapefruit, coated in salinity — restrained yet full of weight." },
+
+  { id:"kokerboom",  series:"District", name:"Kokerboom Semillon",        vintage:"2025", format:"750ml", price:638,  note:"Lanolin-soft Semillon character with a flash of flint, easing into Granny Smith apple." },
+  { id:"mevkirsten", series:"District", name:"Mev Kirsten Chenin Blanc",  vintage:"2025", format:"750ml", price:1303, note:"Tropical passionfruit opens into green apple, held by a firm tannin-acid grip — a true grande dame." },
+  { id:"pofadder",   series:"District", name:"Pofadder Cinsault",         vintage:"2025", format:"750ml", price:638,  note:"Strawberry fruit lifted by pepper, spice and violets — arguably their best Pofadder bottling yet." },
+  { id:"rotsbank",   series:"District", name:"Rotsbank Chenin Blanc",     vintage:"2025", format:"750ml", price:638,  note:"Mineral, saline and gunflint-driven, with the site's signature steely edge." },
+  { id:"skerpioen",  series:"District", name:"Skerpioen White Blend",     vintage:"2025", format:"750ml", price:638,  note:"Lemon zest and honeysuckle over a saline core, linear and focused — built for oysters." },
+  { id:"skurfberg",  series:"District", name:"Skurfberg Chenin Blanc",    vintage:"2025", format:"750ml", price:638,  note:"Stone fruit and waxy pear with savoury tannins, firm acidity and a long, lingering finish." },
+  { id:"soldaat",    series:"District", name:"Soldaat Grenache Noir",     vintage:"2025", format:"750ml", price:638,  note:"Red cherry and pomegranate with a touch of reduction on release — complex, and needs time." },
+  { id:"sonvang",    series:"District", name:"Sonvang Red Blend",         vintage:"2025", format:"750ml", price:638,  note:"Spiced, earthy and distinctly site-driven, with nervy tannins that will mellow in the cellar." },
+  { id:"treinspoor", series:"District", name:"Treinspoor Tinta Barocca",  vintage:"2025", format:"750ml", price:638,  note:"Graphite and cedar over ripe plum — the truest expression yet from this vineyard." },
+  { id:"twiswind",   series:"District", name:"Twiswind White Blend",     vintage:"2025", format:"750ml", price:638,  note:"A twelve-varietal white uniting green apple with tropical, creamy, toasty texture." },
+];
+
+/* ===================== STATE ===================== */
+let cart = {}; // { wineId: qty }
+
+/* ===================== HELPERS ===================== */
+function fmtR(n){ return "R " + Number(n).toLocaleString("en-ZA", {maximumFractionDigits:0}); }
+function wineById(id){ return WINES.find(w => w.id === id); }
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("visible");
+  setTimeout(() => t.classList.remove("visible"), 2400);
+}
+
+function isPastDeadline(){
+  return new Date() > new Date(CONFIG.allocationDeadline);
+}
+function renderDeadline(){
+  const strip = document.getElementById("deadlineStrip");
+  const val = document.getElementById("deadlineValue");
+  const d = new Date(CONFIG.allocationDeadline);
+  const dateStr = d.toLocaleDateString("en-ZA", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+  if (isPastDeadline()){
+    strip.classList.add("closed");
+    val.textContent = "Closed — " + dateStr;
+    document.getElementById("submitBtn").disabled = true;
+  } else {
+    const msLeft = d - new Date();
+    const daysLeft = Math.max(0, Math.ceil(msLeft / 86400000));
+    val.textContent = dateStr + "  ·  " + daysLeft + (daysLeft === 1 ? " day left" : " days left");
+  }
+}
+
+/* ===================== RENDER WINE CARDS ===================== */
+function wineCardHTML(w){
+  const qty = cart[w.id] || 0;
+  return `
+  <div class="wine-card ${qty > 0 ? 'in-cart' : ''}" data-id="${w.id}">
+    <div class="top">
+      <div>
+        <h4>${w.name} <span style="color:var(--muted); font-weight:400; font-size:14px;">${w.vintage}</span></h4>
+        <div class="format">${w.format}</div>
+      </div>
+      <div class="price mono">${fmtR(w.price)}</div>
+    </div>
+    <div class="note">${w.note}</div>
+    <div class="footer-row">
+      <div class="stepper">
+        <button type="button" class="step-minus" aria-label="Decrease quantity">−</button>
+        <span class="qty">${qty}</span>
+        <button type="button" class="step-plus" aria-label="Increase quantity">+</button>
+      </div>
+      <div class="line-total ${qty > 0 ? 'active' : ''}">${qty > 0 ? fmtR(qty * w.price) : '—'}</div>
+    </div>
+  </div>`;
+}
+
+function renderGrids(){
+  const sig = WINES.filter(w => w.series === "Signature");
+  const dist = WINES.filter(w => w.series === "District");
+  document.getElementById("signatureGrid").innerHTML = sig.map(wineCardHTML).join("");
+  document.getElementById("districtGrid").innerHTML = dist.map(wineCardHTML).join("");
+  document.getElementById("districtCount").textContent = dist.length + " wines";
+  attachCardHandlers();
+}
+
+function attachCardHandlers(){
+  document.querySelectorAll(".wine-card").forEach(card => {
+    const id = card.dataset.id;
+    card.querySelector(".step-plus").onclick = () => { cart[id] = (cart[id] || 0) + 1; renderGrids(); renderSummary(); };
+    card.querySelector(".step-minus").onclick = () => {
+      if (!cart[id]) return;
+      cart[id] = Math.max(0, cart[id] - 1);
+      if (cart[id] === 0) delete cart[id];
+      renderGrids(); renderSummary();
+    };
+  });
+}
+
+/* ===================== SUMMARY BAR ===================== */
+function renderSummary(){
+  const ids = Object.keys(cart);
+  const bar = document.getElementById("summaryBar");
+  const totalQty = ids.reduce((s, id) => s + cart[id], 0);
+  const totalValue = ids.reduce((s, id) => s + cart[id] * wineById(id).price, 0);
+  document.getElementById("summaryItems").textContent =
+    ids.length === 0 ? "0 wines selected" : `${ids.length} wine${ids.length > 1 ? 's' : ''} · ${totalQty} bottle${totalQty > 1 ? 's' : ''}`;
+  document.getElementById("summaryTotal").textContent = fmtR(totalValue);
+  bar.classList.toggle("visible", ids.length > 0);
+  document.getElementById("submitBtn").disabled = isPastDeadline();
+}
+
+/* ===================== STORAGE ===================== */
+// Both modes deal in a flat array of line items:
+// { submissionId, customerName, customerEmail, customerPhone, customerNo,
+//   wineId, name, vintage, format, qty, unitPrice, lineTotal, notes, submittedAt }
+
+async function saveLineItems(lineItems){
+  if (DEMO_MODE){
+    demoStore = demoStore.concat(lineItems);
+    return true;
+  }
+  const res = await fetch(CONFIG.sheetWebAppUrl, {
+    method: "POST",
+    // text/plain avoids a CORS preflight that Apps Script Web Apps often can't answer.
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ rows: lineItems }),
+  });
+  if (!res.ok) throw new Error("Sheet backend responded with " + res.status);
+  const data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "Sheet backend reported an error");
+  return true;
+}
+
+// Demo mode still keeps a flat line-item log in memory (demoStore) and
+// derives the same Matrix shape from it on the fly, so the admin view
+// behaves identically in both modes.
+function matrixStateFromDemoStore(){
+  const wineLabels = [];
+  const custMap = {};
+  const stock = {};
+  demoStore.forEach(item => {
+    const label = [item.name, item.vintage, item.format].filter(Boolean).join(" · ");
+    if (wineLabels.indexOf(label) === -1) wineLabels.push(label);
+    const key = (item.customerEmail || item.customerName || "").toLowerCase();
+    if (!key) return;
+    if (!custMap[key]){
+      custMap[key] = { name:item.customerName||"", email:item.customerEmail||"", phone:item.customerPhone||"",
+        custNo:item.customerNo||"", notes:"", status:"", lastSubmitted:"", totalValue:0, qty:{} };
+    }
+    custMap[key].notes = item.notes || custMap[key].notes;
+    custMap[key].lastSubmitted = item.submittedAt ? new Date(item.submittedAt).toLocaleString("en-ZA") : custMap[key].lastSubmitted;
+    custMap[key].qty[label] = (custMap[key].qty[label] || 0) + (Number(item.qty) || 0);
+    custMap[key].totalValue += Number(item.lineTotal) || 0;
+  });
+  const customers = Object.values(custMap);
+  const totalRequested = {}, remaining = {};
+  wineLabels.forEach(label => {
+    totalRequested[label] = customers.reduce((s,c) => s + (c.qty[label]||0), 0);
+    remaining[label] = ""; // no stock data in demo mode
+  });
+  return { wineLabels, customers, stock, totalRequested, remaining };
+}
+
+async function loadMatrixState(){
+  if (DEMO_MODE) return matrixStateFromDemoStore();
+  try {
+    const res = await fetch(CONFIG.sheetWebAppUrl, { method: "GET" });
+    if (!res.ok) throw new Error("Sheet backend responded with " + res.status);
+    const data = await res.json();
+    if (data.status !== "ok") throw new Error(data.message || "Sheet backend reported an error");
+    return {
+      wineLabels: data.wineLabels || [],
+      customers: data.customers || [],
+      stock: data.stock || {},
+      totalRequested: data.totalRequested || {},
+      remaining: data.remaining || {},
+    };
+  } catch (err){
+    console.error("Failed to load wishlists from sheet:", err);
+    showToast("Couldn't reach the spreadsheet backend.");
+    return { wineLabels: [], customers: [], stock: {}, totalRequested: {}, remaining: {} };
+  }
+}
+
+/* ===================== SUBMIT FLOW ===================== */
+async function handleSubmit(){
+  const name = document.getElementById("custName").value.trim();
+  const email = document.getElementById("custEmail").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const custNo = document.getElementById("custCustNo").value.trim();
+  const notes = document.getElementById("custNotes").value.trim();
+
+  if (!name || !email){
+    showToast("Please add your name and email before sending.");
+    return;
+  }
+  if (Object.keys(cart).length === 0){
+    showToast("Select at least one wine first.");
+    return;
+  }
+
+  const submissionId = Date.now() + "-" + Math.random().toString(36).slice(2,8);
+  const submittedAt = new Date().toISOString();
+  const lineItems = Object.keys(cart).map(id => {
+    const w = wineById(id);
+    return {
+      submissionId, customerName:name, customerEmail:email, customerPhone:phone, customerNo:custNo,
+      wineId:id, name:w.name, vintage:w.vintage, format:w.format,
+      qty:cart[id], unitPrice:w.price, lineTotal:cart[id]*w.price,
+      notes, submittedAt,
+    };
+  });
+
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Sending…";
+  try {
+    await saveLineItems(lineItems);
+    document.getElementById("confirmRef").textContent = "Reference: " + submissionId;
+    document.getElementById("confirmMessage").textContent =
+      `Thank you, ${name.split(" ")[0]} — your wishlist for ${lineItems.length} wine${lineItems.length > 1 ? 's' : ''} has been logged with Dry Dock. We'll be in touch once allocations are finalised.`;
+    document.getElementById("confirmOverlay").classList.add("visible");
+    cart = {};
+    renderGrids(); renderSummary();
+    document.getElementById("customerForm").reset();
+  } catch (err){
+    console.error("Submit failed:", err);
+    showToast("Something went wrong sending your wishlist — please try again.");
+  } finally {
+    submitBtn.textContent = "Send my wishlist";
+    submitBtn.disabled = isPastDeadline();
+  }
+}
+
+/* ===================== ADMIN VIEW ===================== */
+// Everything the admin view needs now lives in one Matrix-shaped object:
+// { wineLabels, customers:[{name,email,phone,custNo,notes,status,lastSubmitted,totalValue,qty:{label:n}}],
+//   stock:{label:n}, totalRequested:{label:n}, remaining:{label:n} }
+
+// Same status vocabulary and colors as the Matrix sheet and the Sadie_Allocation sheet.
+const STATUS_COLORS = {
+  "Invoiced": "#00FF00", "Paid": "#FF00FF", "Delivered": "#4A86E8",
+  "Will pay in store": "#7F6000", "Ready for collection": "#FFFF00",
+  "Ordered elsewhere/No": "#FF0000", "To be invoiced": "#00FFFF", "Follow up payment": "#FF9900",
+};
+function statusBadge(status){
+  if (!status) return `<span style="color:var(--muted);">—</span>`;
+  const bg = STATUS_COLORS[status] || "#666";
+  // Dark backgrounds (Delivered blue, Will pay in store brown) read better with light text.
+  const dark = ["Delivered","Will pay in store","Ordered elsewhere/No"].includes(status);
+  return `<span style="background:${bg}; color:${dark ? '#fff' : '#111'}; padding:2px 8px; border-radius:100px; font-size:11.5px; font-weight:600;">${status}</span>`;
+}
+
+function renderAdmin(state){
+  const { wineLabels, customers, stock, totalRequested, remaining } = state;
+  const totalBottles = customers.reduce((s,c) => s + wineLabels.reduce((s2,l) => s2 + (c.qty[l]||0), 0), 0);
+  const totalValue = customers.reduce((s,c) => s + (c.totalValue||0), 0);
+  document.getElementById("kpiSubmissions").textContent = customers.length;
+  document.getElementById("kpiBottles").textContent = totalBottles;
+  document.getElementById("kpiValue").textContent = fmtR(totalValue);
+
+  const container = document.getElementById("ledgerContainer");
+  const notesContainer = document.getElementById("notesContainer");
+
+  if (customers.length === 0){
+    container.innerHTML = `
+      <div class="empty-state">
+        <svg class="crest" viewBox="0 0 24 24" fill="none"><path d="M12 2v13M8 6h8M4 15c1.5 3 4.5 5 8 5s6.5-2 8-5M12 15v6" stroke="#8a93a8" stroke-width="1.3"/></svg>
+        No wishlists yet. Once customers start submitting, demand will show up here in real time.
+      </div>`;
+    notesContainer.innerHTML = "";
+    return;
+  }
+
+  // Wine demand table — one row per wine, sorted by total requested.
+  const sortedLabels = wineLabels.slice().sort((a,b) => (totalRequested[b]||0) - (totalRequested[a]||0));
+  let rows = "";
+  sortedLabels.forEach(label => {
+    const custLines = customers
+      .filter(c => (c.qty[label]||0) > 0)
+      .sort((a,b) => b.qty[label] - a.qty[label])
+      .map(c => `${c.name} (${c.qty[label]})`).join(", ");
+    const stockVal = stock[label];
+    const remVal = remaining[label];
+    rows += `
+      <tr class="wine-total-row">
+        <td>${label}</td>
+        <td class="num">${totalRequested[label] || 0}</td>
+        <td class="num">${stockVal === "" || stockVal === undefined ? "—" : stockVal}</td>
+        <td class="num">${remVal === "" || remVal === undefined ? "—" : remVal}</td>
+      </tr>
+      <tr>
+        <td colspan="4" class="customer-sub">${custLines || "—"}</td>
+      </tr>`;
+  });
+
+  container.innerHTML = `
+    <table class="ledger">
+      <thead>
+        <tr>
+          <th>Wine</th>
+          <th class="num">Total requested</th>
+          <th class="num">Stock on hand</th>
+          <th class="num">Remaining</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p style="color:var(--muted); font-size:11.5px; margin-top:10px;">
+      Stock on hand is edited directly in the Matrix sheet and preserved automatically — set it there to see Remaining update on the next submission or refresh.
+    </p>`;
+
+  // Customers table — every customer, with their status and when they last submitted.
+  // Sorted so anyone still needing a status set (blank) surfaces at the top.
+  const sortedCustomers = customers.slice().sort((a,b) => {
+    if (!a.status && b.status) return -1;
+    if (a.status && !b.status) return 1;
+    return (b.lastSubmitted || "").localeCompare(a.lastSubmitted || "");
+  });
+  const custRows = sortedCustomers.map(c => `
+    <tr>
+      <td>${c.name}</td>
+      <td>${c.email}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td class="num" style="font-family:'JetBrains Mono',monospace; font-size:11.5px;">${c.lastSubmitted || "—"}</td>
+      <td>${(c.notes || "—").replace(/\n/g,"<br>")}</td>
+    </tr>`).join("");
+  notesContainer.innerHTML = `
+    <table class="ledger">
+      <thead><tr><th>Customer</th><th>Email</th><th>Status</th><th class="num">Last submitted</th><th>Notes</th></tr></thead>
+      <tbody>${custRows}</tbody>
+    </table>
+    <p style="color:var(--muted); font-size:11.5px; margin-top:10px;">
+      Status is set directly in the Matrix sheet (dropdown) and colors itself automatically — this table just reflects whatever's there.
+    </p>`;
+}
+
+function exportCSV(state){
+  const { wineLabels, customers, stock, totalRequested, remaining } = state;
+  const header = ["Customer Name","Email","Phone","Customer No.","Notes","Status","Last Submitted"]
+    .concat(wineLabels)
+    .concat(["Total Bottles","Total Value (ZAR)"]);
+  const rows = [header];
+
+  customers.forEach(c => {
+    const totalBottles = wineLabels.reduce((s,l) => s + (c.qty[l]||0), 0);
+    rows.push([c.name, c.email, c.phone, c.custNo, (c.notes||"").replace(/\n/g," "), c.status || "", c.lastSubmitted || ""]
+      .concat(wineLabels.map(l => c.qty[l] || ""))
+      .concat([totalBottles, c.totalValue || 0]));
+  });
+
+  const blankInfoCells = new Array(6).fill("");
+  rows.push(["STOCK ON HAND"].concat(blankInfoCells).concat(wineLabels.map(l => stock[l] === "" ? "" : stock[l])).concat(["",""]));
+  rows.push(["TOTAL REQUESTED"].concat(blankInfoCells).concat(wineLabels.map(l => totalRequested[l] || 0)).concat(["",""]));
+  rows.push(["REMAINING"].concat(blankInfoCells).concat(wineLabels.map(l => remaining[l] === "" ? "" : remaining[l])).concat(["",""]));
+
+  const csv = rows.map(r => r.map(cell => {
+    const s = String(cell);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }).join(",")).join("\n");
+
+  const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "dry-dock-sadie-allocation-matrix-" + new Date().toISOString().slice(0,10) + ".csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function refreshAdmin(){
+  const container = document.getElementById("ledgerContainer");
+  container.innerHTML = `<div class="empty-state">Loading wishlists…</div>`;
+  const state = await loadMatrixState();
+  renderAdmin(state);
+  return state;
+}
+
+/* ===================== VIEW TOGGLE ===================== */
+function showAdmin(){
+  document.getElementById("customerView").classList.add("hidden");
+  document.getElementById("adminView").classList.add("visible");
+  document.getElementById("summaryBar").classList.remove("visible");
+  refreshAdmin();
+}
+function showCustomer(){
+  document.getElementById("adminView").classList.remove("visible");
+  document.getElementById("customerView").classList.remove("hidden");
+  renderSummary();
+}
+
+/* ===================== INIT ===================== */
+document.getElementById("adminToggle").onclick = (e) => { e.preventDefault(); showAdmin(); };
+document.getElementById("backToForm").onclick = (e) => { e.preventDefault(); showCustomer(); };
+document.getElementById("refreshBtn").onclick = refreshAdmin;
+document.getElementById("exportBtn").onclick = async () => {
+  const state = await loadMatrixState();
+  if (state.customers.length === 0){ showToast("No wishlists to export yet."); return; }
+  exportCSV(state);
+};
+document.getElementById("submitBtn").onclick = handleSubmit;
+document.getElementById("clearBtn").onclick = () => { cart = {}; renderGrids(); renderSummary(); };
+document.getElementById("confirmClose").onclick = () => document.getElementById("confirmOverlay").classList.remove("visible");
+
+if (DEMO_MODE) document.getElementById("demoBanner").classList.add("visible");
+renderDeadline();
+renderGrids();
+renderSummary();
+if (location.search.includes("admin=1")) showAdmin();
+setInterval(renderDeadline, 60000);
+</script>
+</body>
+</html>
