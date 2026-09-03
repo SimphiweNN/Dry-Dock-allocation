@@ -520,10 +520,8 @@ function renderGrids(){
   document.getElementById("whitesGrid").innerHTML = wh.map(wineCardHTML).join("");
   document.getElementById("redsGrid").innerHTML = rd.map(wineCardHTML).join("");
   document.getElementById("dessertGrid").innerHTML = ds.map(wineCardHTML).join("");
-  document.getElementById("whitesCount").textContent = wh.length + " wines";
-  document.getElementById("redsCount").textContent = rd.length + " wines";
-  const dessertCountEl = document.getElementById("dessertCount");
-  if (dessertCountEl) dessertCountEl.textContent = ds.length + " wine";
+  
+  
   attachCardHandlers();
 }
 
