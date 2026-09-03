@@ -306,6 +306,33 @@
       <input type="hidden" id="custEmail">
     </form>
 
+    <div class="section-head">
+      <div>
+        <div class="series-label">Single Terroir Whites &middot; 2025 vintage</div>
+        <h3>Chenin Blanc &mdash; Granite, Iron &amp; Schist</h3>
+      </div>
+      <span class="count" id="whitesCount"></span>
+    </div>
+    <div class="wine-grid" id="whitesGrid"></div>
+
+    <div class="section-head">
+      <div>
+        <div class="series-label">Single Terroir Reds &middot; 2024 vintage</div>
+        <h3></h3>
+      </div>
+      <span class="count" id="redsCount"></span>
+    </div>
+    <div class="wine-grid" id="redsGrid"></div>
+
+    <div class="section-head">
+      <div>
+        <div class="series-label">Solera Straw Wine</div>
+        <h3>Olerasay No. 6</h3>
+      </div>
+      <span class="count" id="dessertCount"></span>
+    </div>
+    <div class="wine-grid single" id="dessertGrid"></div>
+
     <div class="field full" style="margin-top:32px;">
       <label for="custNotes">Notes for the team (optional)</label>
       <textarea id="custNotes" placeholder="e.g. happy to substitute format if unavailable"></textarea>
@@ -362,7 +389,7 @@
 // Edit ALLOCATION_DEADLINE for each new release — everything else keys off it.
 const CONFIG = {
   releaseName: "Mullineux — Single Terroir Release",
-  allocationDeadline: "2026-09-08T23:59:59+02:00", // TODO: confirm the real deadline — close of day, SAST
+  allocationDeadline: "2026-09-30T23:59:59+02:00", // TODO: confirm the real deadline — close of day, SAST
   // Google Apps Script Web App URL — deployed and connected to the
   // Mullineux allocation spreadsheet.
   // TODO: this needs its OWN Google Sheet + Apps Script deployment — do not
