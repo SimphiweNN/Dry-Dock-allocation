@@ -390,7 +390,7 @@
 // Edit ALLOCATION_DEADLINE for each new release — everything else keys off it.
 const CONFIG = {
   releaseName: "Mullineux — Single Terroir Release",
-  allocationDeadline: "2026-09-30T23:59:59+02:00", // TODO: confirm the real deadline — close of day, SAST
+  allocationDeadline: "2026-09-08T23:59:59+02:00", // TODO: confirm the real deadline — close of day, SAST
   // Google Apps Script Web App URL — deployed and connected to the
   // Mullineux allocation spreadsheet.
   // TODO: this needs its OWN Google Sheet + Apps Script deployment — do not
@@ -398,7 +398,7 @@ const CONFIG = {
   // will land in the wrong sheet.
   // Leave blank to run in local demo mode — wishlists are stored in memory only and
   // vanish on page refresh, which is fine for testing the flow but NOT for a real release.
-  sheetWebAppUrl: "",
+  sheetWebAppUrl: "https://script.google.com/macros/s/AKfycbz2_uzClcoAbEIXA9d7CC9qio_630z3A173EwWSBdE35kv81CDCy8KgVSxxpvF4ZlXEbg/exec",
 };
 const DEMO_MODE = !CONFIG.sheetWebAppUrl;
 let demoStore = []; // flat line items, demo mode only
